@@ -5,8 +5,11 @@ public class PlayerMovement : MonoBehaviour
 {
     [SerializeField] private InputActionReference controls;
     [SerializeField] private float speed;
+    [SerializeField] private float smoothness;
 
-    private float speedMultiplier = 0f;
+
+    private float currentspeedX = 0f;
+    private float currentspeedY = 0f;
 
     void Start()
     {
@@ -16,15 +19,13 @@ public class PlayerMovement : MonoBehaviour
     void Update()
     {
         Vector2 input = controls.action.ReadValue<Vector2>();
-        if (input.x != 0 || input.y != 0)
-        {
-            speedMultiplier = Mathf.Lerp(speedMultiplier, 1, Time.deltaTime);
-        }
-        else
-        {
-            speedMultiplier = Mathf.Lerp(speedMultiplier, 0, Time.deltaTime);
-        }
-        input *= speed * speedMultiplier * Time.deltaTime;
-        transform.Translate(input.x, 0, input.y);
+
+        input *= speed * Time.deltaTime;
+        
+        currentspeedX = Mathf.Lerp(currentspeedX, input.x, smoothness * Time.deltaTime);
+        currentspeedY = Mathf.Lerp(currentspeedY, input.y, smoothness * Time.deltaTime);
+        
+        transform.Translate(currentspeedX, 0, currentspeedY);
+        transform.Rotate(0, 0, currentspeedY);        
     }
 }
